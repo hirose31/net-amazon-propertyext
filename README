@@ -23,9 +23,11 @@ To install this module, run the following commands:
 
 COPYRIGHT AND LICENCE
 
-Put the correct copyright and licence information here.
-
 Copyright (C) 2008 HIROSE Masaaki
+
+Original code by Naoya Ito
+http://naoya.dyndns.org/~naoya/mt/archives/001542.html
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
+
