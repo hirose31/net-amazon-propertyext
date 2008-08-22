@@ -10,53 +10,50 @@ use base qw(Net::Amazon::Property);
 use Net::Amazon::BrowseNode;
 
 sub new {
-    my ($class, $prop) = @_;
+    my($class, $prop) = @_;
 
     $prop or croak "missing property";
-    my $self  = bless $prop, $class;
+    my $self = bless $prop, $class;
 
-    $self->_set_browsenodes;
+    $self->{__BrowseNodes} = $self->_build_browsenodes;
 
     return $self;
 }
 
-sub _set_browsenodes {
-    my $self = shift;
+sub _build_browsenodes {
+    my($self) = @_;
 
     my $browse_nodes = $self->{xmlref}{BrowseNodes}{BrowseNode};
 
     if (ref($browse_nodes) eq "ARRAY") {
-        my @nodes;
         for my $node (@{ $browse_nodes }) {
             if ($node->{Ancestors}{BrowseNode}{IsCategoryRoot}) {
-                push @nodes, Net::Amazon::BrowseNode->new({
-                    Name => $node->{Name},
-                    BrowseNodeId   => $node->{BrowseNodeId},
-                });
-                for my $child (@{ $node->{Children}{BrowseNode} }) {
-                    push @nodes, Net::Amazon::BrowseNode->new({
-                        Name => $child->{Name},
-                        BrowseNodeId   => $child->{BrowseNodeId},
-                    });
-                }
-                last;
+                return [
+                    map {
+                        Net::Amazon::BrowseNode->new({
+                            Name         => $_->{Name},
+                            BrowseNodeId => $_->{BrowseNodeId},
+                        })
+                        } ($node, @{ $node->{Children}{BrowseNode} })
+                       ];
             }
         }
-        $self->browsenodes(\@nodes);
     } elsif (ref($browse_nodes) eq "HASH") {
-        $self->browsenode([ Net::Amazon::BrowseNode->new({
-            Name => $browse_nodes->{Name},
-            BrowseNodeId   => $browse_nodes->{BrowseNodeId},
-        }) ]);
+        return [
+            Net::Amazon::BrowseNode->new({
+                Name           => $browse_nodes->{Name},
+                BrowseNodeId   => $browse_nodes->{BrowseNodeId},
+            })
+               ];
     } else {
-        $self->browse_nodes([ ]);
+        return [];
     }
 }
 
-sub browsenodes {
-    my $self = shift;
-
-    @_ ? $self->{__browsenode} = shift : $self->{__browsenode};
+sub BrowseNodes {
+    my($self) = @_;
+    croak "cannot alter the value of BrowseNodes on object of this class" if @_ > 1;
+    return $self->{__BrowseNodes};
 }
 
 1;

@@ -4,30 +4,10 @@ use strict;
 use warnings;
 use Carp;
 
+use base qw(Class::Accessor::Fast);
+__PACKAGE__->mk_accessors(qw(BrowseNodeId Name));
+
 our $VERSION = '0.01';
-
-sub new {
-    my ($class, $args) = @_;
-
-    my $self = bless {}, $class;
-
-    $self->{BrowseNodeId} = $args->{BrowseNodeId};
-    $self->{Name}         = $args->{Name};
-
-    return $self;
-}
-
-sub BrowseNodeId {
-    my $self = shift;
-
-    @_ ? $self->{BrowseNodeId} = shift : $self->{BrowseNodeId};
-}
-
-sub Name {
-    my $self = shift;
-
-    @_ ? $self->{Name} = shift : $self->{Name};
-}
 
 1;
 

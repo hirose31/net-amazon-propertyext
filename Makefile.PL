@@ -4,6 +4,7 @@ name        'Net-Amazon-PropertyExt';
 all_from    'lib/Net/Amazon/PropertyExt.pm';
 
 requires 'Net::Amazon'      => 0;
+requires 'Class::Accessor'  => 0;
 
 build_requires 'Test::More' => 0;
 

@@ -18,7 +18,7 @@ run {
     my $xmlref  = { BrowseNodes => { BrowseNode => $block->input } };
     my $prop    = Net::Amazon::Property->new(xmlref => $xmlref);
     my $propext = Net::Amazon::PropertyExt->new($prop);
-    my $testee  = $propext->browsenodes;
+    my $testee  = $propext->BrowseNodes;
 
     is_deeply $testee, $block->expected;
 }
