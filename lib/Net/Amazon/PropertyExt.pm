@@ -4,35 +4,30 @@ use strict;
 use warnings;
 use Carp;
 
-# fixme deleteme
-use Data::Dumper;
-sub d(@) {
-    my $d = Dumper(\@_);
-    $d =~ s/\\x{([0-9a-z]+)}/chr(hex($1))/ge;
-    print $d;
-}
-
 our $VERSION = '0.01';
 
 use base qw(Net::Amazon::Property);
 use Net::Amazon::BrowseNode;
 
 sub new {
-    my $class = shift;
-    my $prop = shift or die;
-    my $self = bless $prop, $class;
+    my ($class, $prop) = @_;
+
+    $prop or croak "missing property";
+    my $self  = bless $prop, $class;
+
     $self->_set_browsenodes;
+
     return $self;
 }
 
 sub _set_browsenodes {
     my $self = shift;
-    my $browse_nodes = $self->{xmlref}->{BrowseNodes}->{BrowseNode};
-    #d $browse_nodes;
+
+    my $browse_nodes = $self->{xmlref}{BrowseNodes}{BrowseNode};
+
     if (ref($browse_nodes) eq "ARRAY") {
         my @nodes;
         for my $node (@{ $browse_nodes }) {
-            #warn exists $node->{Ancestors}{BrowseNode}{IsCategoryRoot} ? 'T' : 'F';
             if ($node->{Ancestors}{BrowseNode}{IsCategoryRoot}) {
                 push @nodes, Net::Amazon::BrowseNode->new({
                     Name => $node->{Name},
@@ -60,7 +55,8 @@ sub _set_browsenodes {
 
 sub browsenodes {
     my $self = shift;
-    @_ ? $self->{__browsenode} = shift: $self->{__browsenode};
+
+    @_ ? $self->{__browsenode} = shift : $self->{__browsenode};
 }
 
 1;
